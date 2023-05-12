@@ -5,12 +5,12 @@ import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.io.File;
-public class API{
+public class Database{
     File database;
     DatabaseMetaData meta;
     Connection conn;
     
-    public API(String fileName){
+    public Database(String fileName){
         this.database = new File(fileName);
         try (Connection conn = DriverManager.getConnection("jdbc:sqlite:"+fileName)) {
             if (conn != null) {
