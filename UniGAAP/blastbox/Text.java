@@ -3,6 +3,7 @@ import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.Instant;
@@ -127,5 +128,47 @@ public class Text {
         }catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+    }
+    public String getRowName(){
+        return this.rowName;
+    }
+    public String getDate(){
+        String query = "SELECT date FROM literature WHERE id="+this.text_id+";";
+        String date = null;
+        ResultSet rs;
+        try (Connection conn = DriverManager.getConnection(this.database);
+        PreparedStatement stm = conn.prepareStatement(query)){
+            rs = stm.executeQuery(query);
+            date = rs.getDate("date").toString();
+        }catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return date;
+    }
+    public byte[] getRawData(){
+        String query = "SELECT raw FROM literature WHERE id="+this.text_id+";";
+        byte[] data = null;
+        ResultSet rs;
+        try (Connection conn = DriverManager.getConnection(this.database);
+        PreparedStatement stm = conn.prepareStatement(query)){
+            rs = stm.executeQuery(query);
+            data = rs.getBlob("raw").getBytes(1, (int)rs.getBlob("raw").length());
+        }catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return data;
+    }
+    public byte[] getNormalizedData(){
+        String query = "SELECT normalized FROM literature WHERE id="+this.text_id+";";
+        byte[] data = null;
+        ResultSet rs;
+        try (Connection conn = DriverManager.getConnection(this.database);
+        PreparedStatement stm = conn.prepareStatement(query)){
+            rs = stm.executeQuery(query);
+            data = rs.getBlob("raw").getBytes(1, (int)rs.getBlob("raw").length());
+        }catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return data;
     }
 }
