@@ -1,5 +1,6 @@
 package blastbox;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 public class API {
@@ -11,6 +12,11 @@ public class API {
         System.out.println("Date: "+test.getDate());
         System.out.println("Charset: "+test.getCharset());
         System.out.println("Data Raw: "+Arrays.toString(test.getRawData()));
-        //System.out.println("Normalized Data: "+test.getNormalizedData());
+        try {
+            System.out.println("Data Raw as String: "+new String(test.getRawData(),test.getCharset()));
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 }

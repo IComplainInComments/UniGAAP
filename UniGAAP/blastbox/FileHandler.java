@@ -6,10 +6,14 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.charset.spi.CharsetProvider;
+import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -53,8 +57,8 @@ public class FileHandler implements Runnable {
         try {
             FileReader reader = new FileReader(this.target);
             this.charSet = reader.getEncoding();
-            this.buff = new BufferedReader(reader, (int) this.target.length());
-            this.raw = ByteBuffer.allocate((int) target.length());
+            this.buff = new BufferedReader(reader, Math.toIntExact(this.target.length()));
+            this.raw = ByteBuffer.allocate(Math.toIntExact(this.target.length()));
         } catch (FileNotFoundException e) {
             System.err.println(e.getMessage());
             e.printStackTrace();
@@ -64,7 +68,7 @@ public class FileHandler implements Runnable {
     }
 
     /**
-     * processFile() Method uses CompleteableFutures to process the file.
+     * run() Method uses CompleteableFutures to process the file.
      * Data is stored in Char/Byte Buffers.
      * 
      * @see java.util.concurrent.CompletableFuture
@@ -73,24 +77,38 @@ public class FileHandler implements Runnable {
      */
     @Override
     public void run() {
+        Thread read = new Thread(new Runnable() {
+            @Override
+            public void run(){
+                try {
+                    buff.read(raw.asCharBuffer());
+                } catch (IOException e) {
+                    System.err.println(e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        });
+        read.start();
         try {
-            buff.
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
+            read.join();
+        } catch (InterruptedException e) {
+            System.out.println(e.getMessage());
             e.printStackTrace();
-        }
-        // Check if the file needs normalized.
-        if (charSet == StandardCharsets.UTF_16.name()) {
-            normalized = ByteBuffer.allocate((int) target.length());
-            // This second future converts the data from its current encoding into UTF-16
-            // and is stored in the normalized buffer.
-            Charset charset = Charset.forName("UTF-16");
-            CharsetEncoder encoder = charset.newEncoder();
-            try {
-                normalized = encoder.encode(raw.asCharBuffer());
-            } catch (CharacterCodingException e) {
-                System.err.println(e.getMessage());
-                e.printStackTrace();
+        } finally {
+            System.out.println("Array: "+Arrays.toString(raw.array()));
+            // Check if the file needs normalized.
+            if (charSet.compareToIgnoreCase(StandardCharsets.UTF_16.name()) != 0) {
+                normalized = ByteBuffer.allocate(Math.toIntExact(this.target.length()));
+                // This second future converts the data from its current encoding into UTF-16
+                // and is stored in the normalized buffer.
+                Charset charset = Charset.forName(StandardCharsets.UTF_16.name());
+                CharsetEncoder encoder = charset.newEncoder();
+                try {
+                    normalized = encoder.encode(raw.asCharBuffer());
+                } catch (CharacterCodingException e) {
+                    System.err.println(e.getMessage());
+                    e.printStackTrace();
+                }
             }
         }
     }

@@ -4,6 +4,22 @@
     ],
     "java.project.referencedLibraries": [
         "lib/**/*.jar",
-        "UniGAAP/dependencies/sqlite-jdbc-3.41.2.1.jar"
+        "UniGAAP/dependencies/sqlite-jdbc-3.41.2.1.jar",
+        "UniGAAP/dependencies/jep-4.1.1.jar",
+        "UniGAAP/dependencies/tika-app-2.8.0.jar",
+        "UniGAAP/dependencies/commons-cli-1.2.jar",
+        "UniGAAP/dependencies/edu.mit.jwi_2.2.3.jar",
+        "UniGAAP/dependencies/guava-17.0.jar",
+        "UniGAAP/dependencies/javassist-3.17.1.jar",
+        "UniGAAP/dependencies/jscience-4.3.1.jar",
+        "UniGAAP/dependencies/junit.jar",
+        "UniGAAP/dependencies/log4j-api-2.15.0.jar",
+        "UniGAAP/dependencies/log4j-core-2.15.0.jar",
+        "UniGAAP/dependencies/reflections-0.9.8.jar",
+        "UniGAAP/dependencies/stanford-ner-2012-07-09.jar",
+        "UniGAAP/dependencies/stanford-postagger-2012-07-09.jar",
+        "UniGAAP/dependencies/tika-app-1.5.jar",
+        "UniGAAP/dependencies/weka.jar",
+        "UniGAAP/dependencies/WordSegment.jar"
     ]
 }

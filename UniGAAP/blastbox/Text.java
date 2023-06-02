@@ -56,26 +56,25 @@ public class Text {
         charSet = target.getCharset();
         this.th = new Thread(this.target, fileName);
         temp1 = new byte[(int) this.target.getFileLength()];
-        this.target.getRawText().get(temp1);
-        query = "INSERT INTO literature(name, date, charset, raw) VALUES(?,?,?,?)";
-
-        /*
-         * temp2 = new byte[(int)target.getFileLength()];
-         * target.getNormalizedText().get(temp2);
-         * query =
-         * "INSERT INTO literatur(name, date, charset, raw, normalized) VALUES(?,?,?,?,?)"
-         * ;
-         */
-
+        this.th.start();
         try {
             this.th.join();
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
+            System.out.println(e.getMessage());
             e.printStackTrace();
+        } finally {
+            this.target.getRawText().get(temp1);
+            if (charSet != "UTF-16") {
+                query = "INSERT INTO literature(name, date, charset, raw, normalized) VALUES(?,?,?,?,?)";
+            } else {
+                query = "INSERT INTO literature(name, date, charset, raw) VALUES(?,?,?,?)";
+            }
         }
         try (Connection conn = DriverManager.getConnection(database);
                 PreparedStatement stm = conn.prepareStatement(query)) {
-            if (charSet == "UTF-16") {
+            if (charSet != "UTF-16") {
+                temp2 = new byte[(int) this.target.getFileLength()];
+                this.target.getNormalizedText().get(temp2);
                 stm.setString(1, this.rowName);
                 stm.setDate(2, new Date(Instant.now().toEpochMilli()));
                 stm.setString(3, this.charSet);
@@ -88,7 +87,7 @@ public class Text {
                 stm.setBytes(4, temp1);
             }
             stm.executeUpdate();
-            System.out.println("INFO::" + rowName + " row had data inserted!");
+            System.out.println("INFO:: " + rowName + " row had data inserted!");
             ids++;
             text_id = ids;
         } catch (SQLException e) {
