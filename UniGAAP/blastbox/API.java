@@ -3,6 +3,8 @@ package blastbox;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
+import sql.Text;
+
 public class API {
     public static void main(String args[]){
         Text test = new Text("test1", "/Users/edward/UniGAAP/database.sql");
