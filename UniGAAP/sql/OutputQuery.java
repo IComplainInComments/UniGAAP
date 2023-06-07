@@ -1,5 +1,5 @@
 package sql;
-public class OutputQuery implements Query{
+public class OutputQuery implements DataQuery{
     private String query;
     private SQLDataType contains;
     Object data;

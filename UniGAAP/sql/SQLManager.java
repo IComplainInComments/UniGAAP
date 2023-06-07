@@ -3,20 +3,21 @@ package sql;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.Date;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.Instant;
 import java.util.Queue;
-
-import javax.management.Query;
 
 
 public  class SQLManager {
     private static File database;
     private static Queue<DataQuery> QueryQueue;
-    private static Queue<DataQuery> ResultQueue;
+    private static Queue<Object> ResultQueue;
     private static DatabaseMetaData meta;
-    private static final String databaseString;
+    private static String databaseString;
 
     public SQLManager(String path){
         database = new File(path);
@@ -64,20 +65,44 @@ public  class SQLManager {
         QueryQueue.add(input);
         processQueue();
     }
-    public DataQuery result(){
+    public Object result(){
         return ResultQueue.poll();
     }
     private void processQueue(){
         if(!QueryQueue.isEmpty()){
-            if(QueryQueue)
-            processQuery(QueryQueue.poll());
+            if(QueryQueue.peek().type() == QueryType.INPUT){
+                processQueryInput(QueryQueue.poll());
+            }
+            if(QueryQueue.peek().type() == QueryType.OUTPUT){
+                ResultQueue.add(processQueryOutput(QueryQueue.poll()));
+            }
             processQueue();
         }
     }
-    private void processQuery(DataQuery query){
-        SQLDataType temp = query.dataType();
-        if(temp == SQLDataType.STRING){
-            String query = "UPDATE literature SET name = " + newName + " WHERE id = " + this.text_id + ";";
+    private void processQueryInput(DataQuery data){
+        SQLDataType temp = data.dataType();
+         if(temp == SQLDataType.BLOB){
+            String query = data.query();
+            try (Connection conn = DriverManager.getConnection(databaseString);
+                    PreparedStatement stm = conn.prepareStatement(query)) {
+                stm.setBytes(1, (byte[])data.getData());
+                stm.execute(query);
+            } catch (SQLException e) {
+                e.printStackTrace();
+                System.out.println(e.getMessage());
+            }
+        } else if(temp == SQLDataType.DATE){
+            String query = data.query();
+            try (Connection conn = DriverManager.getConnection(databaseString);
+                    PreparedStatement stm = conn.prepareStatement(query)) {
+                stm.setDate(1, new Date(Instant.now().toEpochMilli()));
+                stm.execute(query);
+            } catch (SQLException e) {
+                e.printStackTrace();
+                System.out.println(e.getMessage());
+            }
+        } else {
+            String query = data.query();
             try (Connection conn = DriverManager.getConnection(databaseString);
                     PreparedStatement stm = conn.prepareStatement(query)) {
                 stm.execute(query);
@@ -85,13 +110,10 @@ public  class SQLManager {
                 e.printStackTrace();
                 System.out.println(e.getMessage());
             }
-        } else if(temp == SQLDataType.INTEGER){
-
-        } else if(temp == SQLDataType.DATE){
-
-        }else if(temp == SQLDataType.BLOB){
-
         }
+    }
+    private Object processQueryOutput(DataQuery data){
+
     }
 
 }

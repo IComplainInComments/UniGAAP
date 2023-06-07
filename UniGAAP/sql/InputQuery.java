@@ -1,6 +1,6 @@
 package sql;
 
-public class InputQuery implements Query{
+public class InputQuery implements DataQuery{
     private String query;
     private SQLDataType contains;
     private Object data;
