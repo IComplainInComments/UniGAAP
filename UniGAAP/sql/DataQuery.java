@@ -1,5 +1,10 @@
 package sql;
 
+/**
+ * DataQuery Interface is used as a way to relate query types to a common type;
+ * @author IComplainInComments
+ * @version 1.0
+ */
 public interface DataQuery {
     public String query();
     public QueryType type();
