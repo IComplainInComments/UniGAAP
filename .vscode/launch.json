@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Experiment",
+            "request": "launch",
+            "mainClass": "JEP.Experiment",
+            "projectName": "UniGAAP_471eba9b"
+        },
+        {
+            "type": "java",
             "name": "API",
             "request": "launch",
             "mainClass": "blastbox.API",

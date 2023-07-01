@@ -1,24 +1,49 @@
 package blastbox;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import org.apache.tika.io.TikaInputStream;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class TextProcess {
-    private File theFile;
-    private TikaInputStream theText;
-    private String charSet;
-    private int length;
-    public TextProcess(String filename) throws FileNotFoundException{
-        this.theFile = new File(filename);
-        if(!this.theFile.exists()){
-            throw new FileNotFoundException("TextProcess Constructor: File not found!");
-        } else {
-            this.theText = TikaInputStream.get(this.theFile);
-            gatherMetaData();
+    private Path target;
+    private String encoding, language;
+    private byte[] bArray;
+    public TextProcess(String filename, String encoding, String language){
+        processFile(filename);
+        this.encoding = encoding;
+        this.language = language;
+    }
+    public void processFile(String filename){
+        try {
+            this.target = Paths.get(filename);
+            this.bArray = Files.readAllBytes(this.target);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
-    private void gatherMetaData(){
+    public int getFileSize() {
+        return this.bArray.length;
+    }
+    public String getEncoding() {
+        return encoding;
+    }
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
+    }
+    public String getLanguage() {
+        return language;
+    }
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+    public ByteBuffer getRawBytes(){
+        return ByteBuffer.wrap(bArray);
+    }
+    public CharBuffer genCharBuffer(){
+        return ByteBuffer.wrap(bArray).asCharBuffer();
     }
 }
