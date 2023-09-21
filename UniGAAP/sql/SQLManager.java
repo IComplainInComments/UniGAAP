@@ -145,7 +145,7 @@ public  class SQLManager {
      * @return OutputQuery
      * @see OutputQuery
      */
-    private OutputQuery processQueryOutput(OutputQuery data){
+    private void processQueryOutput(OutputQuery data){
         SQLDataType type = data.dataType();
         OutputQuery result = null;
         if(type == SQLDataType.STRING){
@@ -203,8 +203,7 @@ public  class SQLManager {
         } else {
 
         }
-        return result;
-
+        ResultQueue.add(result);
     }
 
 }
